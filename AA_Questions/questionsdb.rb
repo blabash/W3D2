@@ -18,7 +18,7 @@ class User
 
   def self.all
     data = QuestionsDatabase.instance.execute('SELECT * FROM users')
-    data.map { |datum| Users.new(datum) }
+    data.map { |datum| User.new(datum) }
   end
 
   def self.find_by_name(fname, lname)
@@ -56,14 +56,11 @@ class User
   end
 
   def authored_questions
-    data = QuestionsDatabase.instance.execute(<<-SQL, authored_questions)
-    SELECT
-      body
-    FROM
-      questions
-    WHERE
-      id = self
-    SQL
+    Question.find_by_author_id(self.id)
+  end
+
+  def authored_replies
+    Reply.find_by_user_id(self.id)
   end
 end
 
@@ -80,7 +77,7 @@ class Question
   def self.find_by_author_id(author_id)
     data = QuestionsDatabase.instance.execute(<<-SQL, author_id)
       SELECT
-        user_id
+        id, title, body, user_id
       FROM
         questions
       WHERE
@@ -89,7 +86,7 @@ class Question
 
     return nil unless data.length > 0
 
-    Question.new(data.first)
+    data.map { |datum| Question.new(datum) } 
   end
 
   def self.find_by_id(id)
@@ -153,6 +150,10 @@ class Question
     @title = options['title']
     @body = options['body']
     @user_id = options['user_id']
+  end
+
+  def author
+    User.find_by_id(self.user_id)
   end
 end
 
@@ -262,7 +263,7 @@ class Reply
       SQL
       return nil unless data.length > 0
 
-      Reply.new(data.first)
+    data.map { |datum| Reply.new(datum) }
   end
 
   def self.find_by_question_id(question_id)

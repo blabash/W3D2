@@ -75,6 +75,8 @@ VALUES
   ('DERP HERP!', (SELECT id FROM users WHERE fname = 'Herp'), (SELECT id FROM questions WHERE body = 'HERP DERP?'), 
     (SELECT id FROM replies WHERE parent_reply_id = id)),
   ('It''s a beautiful day in the neighborhood', (SELECT id FROM users WHERE fname = 'Mr.'), (SELECT id FROM questions WHERE body = 'Won''t you be my neighbor?'), 
+    (SELECT id FROM replies WHERE parent_reply_id = id)),
+  ('Can you say ''neighbor''', (SELECT id FROM users WHERE fname = 'Mr.'), (SELECT id FROM questions WHERE body = 'Won''t you be my neighbor?'), 
     (SELECT id FROM replies WHERE parent_reply_id = id));
 
 INSERT INTO
